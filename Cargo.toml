@@ -1,0 +1,29 @@
+[package]
+name = "img2cssart"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+js-sys = "0.3"
+photon-rs = "0.3.2"
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+
+[dependencies.web-sys]
+version = "0.3"
+features = [
+  'CssStyleDeclaration',
+  'console',
+  'Document',
+  'Element',
+  'HtmlElement',
+  'HtmlInputElement',
+  'Node',
+  'Window',
+  'FileList',
+  'File',
+  'Blob',
+]

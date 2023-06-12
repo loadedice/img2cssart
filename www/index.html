@@ -1,0 +1,30 @@
+<html>
+  <head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type"/>
+    <title>~.~ img2css ~.~</title>
+
+    <style type='text/css' media='screen'>
+      ::selection {
+        color: rgba(0, 0, 0, 0);
+      }
+    </style>
+
+    <script type="module">
+      import init, { submit } from '../pkg/img2cssart.js';
+      async function run() {
+        await init();
+      }
+      run();
+      document.getElementById("submit").addEventListener('click', submit);
+    </script>
+
+  </head>
+  <body>
+
+    <input id="text" type="text" value="Some text here" minlength="1" required>
+    <input id="image" type="file" name="file" />
+    <button id="submit"> Click me </button>
+    <hr>
+    <pre id="output"></pre>
+  </body>
+</html>
