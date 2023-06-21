@@ -2,17 +2,13 @@ use std::collections::HashMap;
 
 use image::GenericImageView;
 
+use image::load_from_memory;
 use image::Pixel;
 use js_sys::Uint8Array;
-use photon_rs::helpers;
-use photon_rs::native::open_image_from_bytes;
-use photon_rs::transform::resize;
-use photon_rs::transform::SamplingFilter;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::JsFuture;
 
-use web_sys::console;
 use web_sys::window;
 use web_sys::HtmlInputElement;
 
@@ -20,20 +16,21 @@ use web_sys::HtmlInputElement;
 #[wasm_bindgen(start)]
 pub fn main() -> Result<(), JsValue> {
     // TODO: Set up panic hook
-    // TODO: Set up button onclick event
-    // TODO: Generate all the starting HTML in here rather than using it from index.html
-
+    //
+    // TODO: Generate all the starting HTML in here rather than using it from index.html, so that
+    //   way we can get rid of all the dyn_into.
+    //
+    // TODO: Remove this line from the HTML:
+    // document.getElementById("submit").addEventListener('click', submit);
+    //
     // let window = window().expect("No global window exists");
     // let document = window.document().expect("No window.document exists");
-
-    // let text = document
-    //     .get_element_by_id("text")
-    //     .expect("Input text not found!")
-    //     .dyn_into::<HtmlInputElement>()
-    //     .unwrap()
-    //     .value();
-    // console::log_1(&text.into());
-
+    // let submit_button = document
+    //     .get_element_by_id("submit")
+    //     .expect("Expect submit to exist")
+    //     .dyn_into::<HtmlButtonElement>()
+    //     .expect("Submit is not a button element?");
+    // submit_button.add_event_listener_with_callback("click", submit);
     Ok(())
 }
 
@@ -41,7 +38,6 @@ pub fn main() -> Result<(), JsValue> {
 pub async fn submit() -> Result<(), JsValue> {
     let window = window().expect("No global window exists");
     let document = window.document().expect("No window.document exists");
-    let head = document.head().expect("No head tag exists");
     let output = document
         .get_element_by_id("output")
         .expect("Expect output to exist");
@@ -56,7 +52,7 @@ pub async fn submit() -> Result<(), JsValue> {
         .get_element_by_id("text")
         .expect("Input text not found!")
         .dyn_into::<HtmlInputElement>()
-        .unwrap()
+        .expect("Input not an input element?")
         .value();
     // Conver into char iter and cycle
     let mut chars = text.chars().cycle();
@@ -75,12 +71,15 @@ pub async fn submit() -> Result<(), JsValue> {
     let bytes = bytes.to_vec();
 
     // Read image and resize
-    let img = open_image_from_bytes(&bytes).expect("Image should be valid");
+    // let img = open_image_from_bytes(&bytes).expect("Image should be valid");
+    let img = load_from_memory(&bytes).expect("Image should be valid");
     let width = 128;
-    let ratio = img.get_width() / width;
-    let height = img.get_height() / ratio;
-    let img = resize(&img, width, height, SamplingFilter::Nearest);
-    let img = helpers::dyn_image_from_raw(&img);
+    let ratio = img.width() / width;
+    let height = img.height() / ratio;
+    let img = img.resize(width, height, image::imageops::FilterType::Nearest);
+    // Resize may not be exact, so get the height and width after resizing.
+    let width = img.width();
+    let height = img.height();
 
     // Map RGB tuple to css class name
     let mut css_color_map = HashMap::new();
@@ -90,8 +89,8 @@ pub async fn submit() -> Result<(), JsValue> {
         for x in 0..width {
             let span = document.create_element("span")?;
             let pixel = img.get_pixel(x, y);
-            let (r, g, b, _) = pixel.channels4();
-            let rgb = (r, g, b);
+            let channels = pixel.channels();
+            let rgb = (channels[0], channels[1], channels[2]);
             if !css_color_map.contains_key(&rgb) {
                 let name = format!("color-{}", css_color_map.len());
                 css_color_map.insert(rgb.clone(), name);
@@ -104,6 +103,7 @@ pub async fn submit() -> Result<(), JsValue> {
         output.append_child(&div)?;
     }
 
+    // Create a style sheet in the doc and use it.
     let style = document.create_element("style")?;
     let mut css = Vec::new();
     for (k, v) in css_color_map.iter() {
@@ -111,6 +111,6 @@ pub async fn submit() -> Result<(), JsValue> {
     }
     style.set_inner_html(&css.join("\n"));
 
-    head.append_child(&style)?;
+    output.append_child(&style)?;
     Ok(())
 }

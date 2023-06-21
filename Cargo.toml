@@ -11,25 +11,20 @@ lto = true
 opt-level = 'z'
 
 [dependencies]
-image = "0.23.12"
+image = "0.24"
 js-sys = "0.3"
-photon-rs = "0.3.2"
 wasm-bindgen = "0.2"
 wasm-bindgen-futures = "0.4"
 
 [dependencies.web-sys]
 version = "0.3"
 features = [
-  'CssStyleDeclaration',
-  'console',
   'Document',
-  'Element',
-  'HtmlHeadElement',
-  'HtmlElement',
-  'HtmlInputElement',
-  'Node',
-  'Window',
-  'FileList',
   'File',
-  'Blob',
+  'FileList',
+  'HtmlInputElement',
+  'HtmlButtonElement',
+  'EventListener',
+  'EventTarget',
+  'Window',
 ]
