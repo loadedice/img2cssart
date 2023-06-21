@@ -1,23 +1,30 @@
 [package]
-name = "img2cssart"
-version = "0.1.0"
-edition = "2021"
+name = 'img2cssart'
+version = '0.1.0'
+edition = '2021'
+license = 'MIT'
+readme = 'README.md'
+repository = 'https://github.com/loadedice/img2cssart/'
 
 [lib]
-crate-type = ["cdylib"]
+crate-type = ['cdylib']
 
 [profile.release]
 lto = true
 opt-level = 'z'
 
 [dependencies]
-image = "0.24"
-js-sys = "0.3"
-wasm-bindgen = "0.2"
-wasm-bindgen-futures = "0.4"
+js-sys = '0.3'
+wasm-bindgen = '0.2'
+wasm-bindgen-futures = '0.4'
+
+[dependencies.image]
+version = '0.24'
+default-features = false
+features = ['jpeg', 'png', 'gif']
 
 [dependencies.web-sys]
-version = "0.3"
+version = '0.3'
 features = [
   'Document',
   'File',
