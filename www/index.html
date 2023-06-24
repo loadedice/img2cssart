@@ -15,15 +15,16 @@
         await init();
       }
       run();
-      document.getElementById("submit").addEventListener('click', submit);
+      document.getElementById("form").addEventListener('submit', submit);
     </script>
 
   </head>
   <body>
-
-    <input id="text" type="text" value="Some text here" minlength="1" required>
-    <input id="image" type="file" name="file" />
-    <button id="submit"> Click me </button>
+    <form id="form" onsubmit="return false">
+      <input id="text" type="text" value="Some text here" minlength="1" required>
+      <input id="image" type="file" name="file" accept="image/png, image/jpeg" required>
+      <input type="submit">
+    </form>
     <hr>
     <pre id="output"></pre>
   </body>
