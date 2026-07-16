@@ -2,15 +2,15 @@ use std::collections::HashMap;
 
 use image::GenericImageView;
 
-use image::load_from_memory;
 use image::Pixel;
+use image::load_from_memory;
 use js_sys::Uint8Array;
-use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
+use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::JsFuture;
 
-use web_sys::window;
 use web_sys::HtmlInputElement;
+use web_sys::window;
 
 // Called when the wasm module is instantiated
 #[wasm_bindgen(start)]
@@ -91,11 +91,10 @@ pub async fn submit() -> Result<(), JsValue> {
             let pixel = img.get_pixel(x, y);
             let channels = pixel.channels();
             let rgb = (channels[0], channels[1], channels[2]);
-            if !css_color_map.contains_key(&rgb) {
-                let name = format!("color-{}", css_color_map.len());
-                css_color_map.insert(rgb, name);
-            }
-            let class_name = css_color_map.get(&rgb).unwrap();
+            let next_id = css_color_map.len();
+            let class_name = css_color_map
+                .entry(rgb)
+                .or_insert_with(|| format!("color-{}", next_id));
             span.set_class_name(class_name);
             span.set_inner_html(&(chars.next().unwrap().to_string()));
             div.append_child(&span)?;
