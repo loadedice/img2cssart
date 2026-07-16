@@ -84,6 +84,7 @@ pub async fn submit() -> Result<(), JsValue> {
     // Map RGB tuple to css class name
     let mut css_color_map = HashMap::new();
 
+    let fragment = document.create_document_fragment();
     for y in 0..height {
         let div = document.create_element("div")?;
         for x in 0..width {
@@ -99,8 +100,9 @@ pub async fn submit() -> Result<(), JsValue> {
             span.set_inner_html(&(chars.next().unwrap().to_string()));
             div.append_child(&span)?;
         }
-        output.append_child(&div)?;
+        fragment.append_child(&div)?;
     }
+    output.append_child(&fragment)?;
 
     // Create a style sheet in the doc and use it.
     let style = document.create_element("style")?;

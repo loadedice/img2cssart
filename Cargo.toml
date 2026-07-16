@@ -29,6 +29,7 @@ features = ['jpeg', 'png', 'gif']
 version = '0.3'
 features = [
   'Document',
+  'DocumentFragment',
   'File',
   'FileList',
   'HtmlInputElement',
