@@ -54,7 +54,7 @@ pub async fn submit() -> Result<(), JsValue> {
         .dyn_into::<HtmlInputElement>()
         .expect("Input not an input element?")
         .value();
-    // Conver into char iter and cycle
+    // Convert into char iter and cycle
     let mut chars = text.chars().cycle();
 
     // Read selected image into bytes
@@ -93,7 +93,7 @@ pub async fn submit() -> Result<(), JsValue> {
             let rgb = (channels[0], channels[1], channels[2]);
             if !css_color_map.contains_key(&rgb) {
                 let name = format!("color-{}", css_color_map.len());
-                css_color_map.insert(rgb.clone(), name);
+                css_color_map.insert(rgb, name);
             }
             let class_name = css_color_map.get(&rgb).unwrap();
             span.set_class_name(class_name);
