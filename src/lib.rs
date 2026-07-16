@@ -97,7 +97,7 @@ pub async fn submit() -> Result<(), JsValue> {
                 .entry(rgb)
                 .or_insert_with(|| format!("color-{}", next_id));
             span.set_class_name(class_name);
-            span.set_inner_html(&(chars.next().unwrap().to_string()));
+            span.set_text_content(Some(&chars.next().unwrap().to_string()));
             div.append_child(&span)?;
         }
         fragment.append_child(&div)?;
